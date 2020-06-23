@@ -17,6 +17,9 @@ function createApp() {
   app.enable('trust proxy', 1);
   app.disable('x-powered-by');
 
+  // add monitoring ricky
+  app.use(require('express-status-monitor')());
+
   if (config.NODE_ENV !== 'production') {
     app.use(morgan('dev'));
   }

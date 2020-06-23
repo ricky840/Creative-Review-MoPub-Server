@@ -21,6 +21,9 @@ async function createBrowser(opts) {
   if (!opts.enableGPU || navigator.userAgent.indexOf('Win') !== -1) {
     browserOpts.args.push('--disable-gpu');
   }
+  // Ricky
+  browserOpts.args.push('--disable-extensions-http-throttling');
+
   return puppeteer.launch(browserOpts);
 }
 
@@ -61,7 +64,7 @@ async function render(_opts = {}) {
   const browser = await createBrowser(opts);
   const page = await browser.newPage();
 
-  page.on('console', (...args) => logger.info('PAGE LOG:', ...args));
+  // page.on('console', (...args) => logger.info('PAGE LOG:', ...args));
 
   page.on('error', (err) => {
     logger.error(`Error event emitted: ${err}`);
