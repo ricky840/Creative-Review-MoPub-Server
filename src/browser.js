@@ -32,7 +32,7 @@ async function createBrowser() {
 
 async function launchChrome() {
   const browser = await createBrowser();
-	console.log("Chrome browser ready!");
+	console.log("Chrome browser ready! press ctrl + c to close browser");
 	return browser;
 }
 

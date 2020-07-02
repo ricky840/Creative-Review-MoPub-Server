@@ -28,7 +28,7 @@ async function closeServer(signal) {
 
 	// [Ricky] Close browser
 	const browser = browserManager.getBrowser();
-	console.log('Closing Chrome..');
+	console.log('Closing browser..');
 	await browser.close();
 
   server.destroy();
