@@ -32,15 +32,15 @@ async function createBrowser() {
 
 async function launchChrome() {
   const browser = await createBrowser();
-	console.log("Chrome browser ready");
+	console.log("Chrome browser ready!");
 	return browser;
 }
 
 let chromeBrowser = launchChrome();
 
 const getBrowser = () => {
-  return chrome;
-};
+  return chromeBrowser;
+}
 
 module.exports = {
 	getBrowser

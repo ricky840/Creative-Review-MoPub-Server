@@ -22,14 +22,14 @@ const server = app.listen(config.PORT, () => {
 });
 enableDestroy(server);
 
-function closeServer(signal) {
+async function closeServer(signal) {
   logger.info(`${signal} received`);
   logger.info('Closing http.Server ..');
 
 	// [Ricky] Close browser
 	const browser = browserManager.getBrowser();
-	console.log('Closing Chrome');
-	browser.close();
+	console.log('Closing Chrome..');
+	await browser.close();
 
   server.destroy();
 }
