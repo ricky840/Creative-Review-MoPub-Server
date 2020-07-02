@@ -4,6 +4,9 @@ const BPromise = require('bluebird');
 const logger = require('./util/logger')(__filename);
 const config = require('./config');
 
+// [Ricky]
+const browserManager = require('./browser.js');
+
 BPromise.config({
   warnings: config.NODE_ENV !== 'production',
   longStackTraces: true,
@@ -22,6 +25,12 @@ enableDestroy(server);
 function closeServer(signal) {
   logger.info(`${signal} received`);
   logger.info('Closing http.Server ..');
+
+	// [Ricky] Close browser
+	const browser = browserManager.getBrowser();
+	console.log('Closing Chrome');
+	browser.close();
+
   server.destroy();
 }
 

@@ -3,29 +3,29 @@ const _ = require('lodash');
 const config = require('../config');
 const logger = require('../util/logger')(__filename);
 
+// Ricky
+const browserManager = require('../browser.js');
 
-async function createBrowser(opts) {
-  const browserOpts = {
-    ignoreHTTPSErrors: opts.ignoreHttpsErrors,
-    sloMo: config.DEBUG_MODE ? 250 : undefined,
-  };
-  if (config.BROWSER_WS_ENDPOINT) {
-    browserOpts.browserWSEndpoint = config.BROWSER_WS_ENDPOINT;
-    return puppeteer.connect(browserOpts);
-  }
-  if (config.BROWSER_EXECUTABLE_PATH) {
-    browserOpts.executablePath = config.BROWSER_EXECUTABLE_PATH;
-  }
-  browserOpts.headless = !config.DEBUG_MODE;
-  browserOpts.args = ['--no-sandbox', '--disable-setuid-sandbox'];
-  if (!opts.enableGPU || navigator.userAgent.indexOf('Win') !== -1) {
-    browserOpts.args.push('--disable-gpu');
-  }
-  // Ricky
-  browserOpts.args.push('--disable-extensions-http-throttling');
-
-  return puppeteer.launch(browserOpts);
-}
+// async function createBrowser(opts) {
+//   const browserOpts = {
+//     ignoreHTTPSErrors: opts.ignoreHttpsErrors,
+//     sloMo: config.DEBUG_MODE ? 250 : undefined,
+//   };
+//   if (config.BROWSER_WS_ENDPOINT) {
+//     browserOpts.browserWSEndpoint = config.BROWSER_WS_ENDPOINT;
+//     return puppeteer.connect(browserOpts);
+//   }
+//   if (config.BROWSER_EXECUTABLE_PATH) {
+//     browserOpts.executablePath = config.BROWSER_EXECUTABLE_PATH;
+//   }
+//   browserOpts.headless = !config.DEBUG_MODE;
+//   browserOpts.args = ['--no-sandbox', '--disable-setuid-sandbox'];
+//   if (!opts.enableGPU || navigator.userAgent.indexOf('Win') !== -1) {
+//     browserOpts.args.push('--disable-gpu');
+//   }
+//
+//   return puppeteer.launch(browserOpts);
+// }
 
 async function render(_opts = {}) {
   const opts = _.merge({
@@ -61,15 +61,20 @@ async function render(_opts = {}) {
 
   logOpts(opts);
 
-  const browser = await createBrowser(opts);
+	// [Ricky] Use created browser
+  // const browser = await createBrowser(opts);
+	const browser = await browserManager.getBrowser();
   const page = await browser.newPage();
 
+	// [Ricky] Disable console logs
   // page.on('console', (...args) => logger.info('PAGE LOG:', ...args));
 
   page.on('error', (err) => {
     logger.error(`Error event emitted: ${err}`);
     logger.error(err.stack);
-    browser.close();
+    // [Ricky] close tab instead of browser
+    // browser.close();
+    page.close();
   });
 
 
@@ -182,9 +187,11 @@ async function render(_opts = {}) {
     logger.error(err.stack);
     throw err;
   } finally {
-    logger.info('Closing browser..');
+    logger.info('Closing browser..(tab)');
     if (!config.DEBUG_MODE) {
-      await browser.close();
+      // [Ricky] close tab instead of browser
+      // await browser.close();
+      await page.close();
     }
   }
   
