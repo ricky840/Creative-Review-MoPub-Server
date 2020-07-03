@@ -7,6 +7,19 @@ const config = require('./config');
 // [Ricky]
 const browserManager = require('./browser.js');
 
+// Create browser
+launchBrowser();
+
+async function launchBrowser() {
+	const launchResult = await browserManager.launchChrome();
+	if (launchResult) {
+		console.log("Chrome browser ready! press ctrl + c to close");
+	} else {
+		console.log("Error launching browser. Have you updated the path correctly? press ctrl + c to exit");
+		closeServer('SIGINT(Ctrl-C)');
+	}
+}
+
 BPromise.config({
   warnings: config.NODE_ENV !== 'production',
   longStackTraces: true,
@@ -28,8 +41,10 @@ async function closeServer(signal) {
 
 	// [Ricky] Close browser
 	const browser = browserManager.getBrowser();
-	console.log('Closing browser..');
-	await browser.close();
+	if (browser) {
+		console.log('Closing browser..');
+		await browser.close();
+	}
 
   server.destroy();
 }

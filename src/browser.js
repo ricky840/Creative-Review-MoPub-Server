@@ -31,17 +31,26 @@ async function createBrowser() {
 }
 
 async function launchChrome() {
-  const browser = await createBrowser();
-	console.log("Chrome browser ready! press ctrl + c to close browser");
-	return browser;
+	try {
+		const browser = await createBrowser();
+		if (browser.isConnected()) {
+			chromeBrowser = browser;
+			return true;
+		} else {
+			return false;
+		}
+	} catch(e) {
+		return false;
+	}
 }
 
-let chromeBrowser = launchChrome();
+let chromeBrowser;
 
 const getBrowser = () => {
   return chromeBrowser;
 }
 
 module.exports = {
-	getBrowser
+	getBrowser,
+  launchChrome
 }
